@@ -177,7 +177,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.TopCenter),
-            context = context
+            context = context , tesctname = "search place"
         ) { placeId, latLng ->
             selectedLocations = latLng
             cameraPositionState.move(
@@ -219,6 +219,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
+                //containerColor = Color.White
 
                 ) {
 
@@ -229,14 +230,38 @@ fun MapScreen(mapViewModel: MapViewModel) {
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("This is a Bottom Sheet", style = MaterialTheme.typography.headlineSmall)
+                    Text("Set Your Routes", style = MaterialTheme.typography.headlineSmall)
                     Spacer(modifier = Modifier.height(10.dp))
-                    SearchBar {  }
+                    // Search Bar
+                    AutoCompleteSearchBar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+
+                        context = context , tesctname = "Pick up"
+                    ) { placeId, latLng ->
+                        selectedLocations = latLng
+                        cameraPositionState.move(
+                            CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                        )
+
+                    }
                     Spacer(modifier = Modifier.height(10.dp))
-                    SearchBar {  }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    SearchBar {  }
-                    Spacer(modifier = Modifier.height(10.dp))
+                    // Search Bar
+                    AutoCompleteSearchBar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            ,
+                        context = context , tesctname =  "Destination drop "
+                    ) { placeId, latLng ->
+                        selectedLocations = latLng
+                        cameraPositionState.move(
+                            CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                        )
+
+                    }
+
 
                    // Button(onClick = { showBottomSheet = false }) {
                      //   Text("Close")

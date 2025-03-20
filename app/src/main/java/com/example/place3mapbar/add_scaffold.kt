@@ -49,8 +49,9 @@ fun BottomNavScreen() {
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
-        BottomNavItem("Home", R.drawable.baseline_home_24, "home"),
+
         BottomNavItem("Ride", R.drawable.baseline_local_car_wash_24, "ride"),
+        BottomNavItem("Home", R.drawable.baseline_home_24, "home"),
         BottomNavItem("Profile", R.drawable.baseline_manage_accounts_24, "profile")
     )
     NavigationBar {
@@ -83,6 +84,7 @@ fun HomeScreen() {
 
 @Composable
 fun RideScreen() { Text(text = "🚗 Ride Screen") }
+// we have connect api to show a lazy column.....
 
 @Composable
 fun ProfileScreen()

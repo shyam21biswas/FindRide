@@ -40,14 +40,17 @@ import com.google.android.libraries.places.api.model.Place
 fun AutoCompleteSearchBar(
     modifier: Modifier = Modifier,
     context: Context,
-    onLocationSelected: (String, LatLng) -> Unit
+    tesctname : String = "shyam",
+    onLocationSelected: (String, LatLng) -> Unit,
+
 ) {
     val placesClient = Places.createClient(context)
     var query by remember { mutableStateOf("") }
     var predictions by remember { mutableStateOf(emptyList<AutocompletePrediction>()) }
 
-    Column(modifier = modifier.background(Color.White, shape = RoundedCornerShape(12.dp))) {
+    Column(modifier = modifier.background(Color.White, shape = RoundedCornerShape(18.dp))) {
         OutlinedTextField(
+            shape = RoundedCornerShape(18.dp),
             value = query,
             onValueChange = { newValue ->
                 query = newValue
@@ -66,7 +69,7 @@ fun AutoCompleteSearchBar(
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search location...") },
+            placeholder = { Text(text = tesctname) },
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { query = ""; predictions = emptyList() }) {
@@ -74,6 +77,7 @@ fun AutoCompleteSearchBar(
                 }
             }
         )
+
 
         // Show Predictions as a Dropdown List
         LazyColumn(modifier = Modifier.background(Color.White)) {
