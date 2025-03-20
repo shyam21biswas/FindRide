@@ -111,6 +111,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
     {
         // Add the search bar component
         // SearchBar(
+        //
         //   onPlaceSelected = { /*place ->
         //       // When a place is selected from the search bar, update the selected location
         //      mapViewModel.selectLocation(place, context)*/
