@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.res.painterResource
 
@@ -29,6 +30,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 fun BottomNavScreen() {
     val navController = rememberNavController()
     Scaffold(
+
         bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
         AnimatedNavHost(
@@ -36,7 +38,9 @@ fun BottomNavScreen() {
             startDestination = "home",
             modifier = Modifier.padding(innerPadding),
             enterTransition = {  fadeIn() },
-            exitTransition = {  fadeOut() }
+            exitTransition = {  fadeOut() },
+            popEnterTransition = { slideInHorizontally() },
+            popExitTransition = { slideOutHorizontally() }
 
         ) {
             composable("home") { HomeScreen() }

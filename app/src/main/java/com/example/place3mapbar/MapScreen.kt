@@ -41,7 +41,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -84,6 +86,12 @@ fun MapScreen(mapViewModel: MapViewModel) {
             Timber.e("Location permission was denied by the user.")
         }
     }
+    val mapProperties = MapProperties(
+           mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+               context,
+                R.raw.stylemap
+           )
+          )
 
 // Request the location permission when the composable is launched
     LaunchedEffect(Unit) {
@@ -123,6 +131,8 @@ fun MapScreen(mapViewModel: MapViewModel) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
+            properties = mapProperties,
+
             onMapClick = { latLng ->
                 // Update the coordinates when the map is clicked
                 currentCoordinates.value = latLng
@@ -140,7 +150,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
                     snippet = "This is where you are currently located." // Set the snippet for the marker
                 )
                 // Move the camera to the user's location with a zoom level of 10f
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 18f)
             }
             // If a location was selected from the search bar, place a marker there
             selectedLocation?.let {
@@ -178,11 +188,11 @@ fun MapScreen(mapViewModel: MapViewModel) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.TopCenter),
-            context = context , tesctname = "search place"
+            context = context , textname = "search place"
         ) { placeId, latLng ->
             selectedLocations = latLng
             cameraPositionState.move(
-                CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                CameraUpdateFactory.newLatLngZoom(latLng, 10f)
             )
 
         }
@@ -208,23 +218,24 @@ fun MapScreen(mapViewModel: MapViewModel) {
         var showBottomSheet by remember { mutableStateOf(false) }
 
          FloatingActionButton(
+             // the click button to open the bottom sheet...............
         onClick = { showBottomSheet = true },
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(bottom = 60.dp),
         containerColor = Color.White
     ) {
-        Text("Destination", color = Color.Black, fontWeight = FontWeight.Medium , fontSize = 30.sp)
+        Text("  Destination  ", color = Color.Black, fontWeight = FontWeight.Medium , fontSize = 30.sp)
     }
-        // ✅ Half-Screen Bottom Sheet   EDIT ON YOUR OWN
+        //  Half-Screen Bottom Sheet   EDIT ON YOUR OWN
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                //containerColor = Color.White
+                tonalElevation = 15.dp , shape = MaterialTheme.shapes.extraLarge
 
                 ) {
 
-                // 📌 Bottom Sheet Content
+                //  Bottom Sheet Content
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -239,7 +250,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
                             .fillMaxWidth()
                             .padding(16.dp),
 
-                        context = context , tesctname = "Pick up"
+                        context = context , textname = "Pick up location ..."
                     ) { placeId, latLng ->
                         selectedLocations = latLng
                         cameraPositionState.move(
@@ -248,13 +259,15 @@ fun MapScreen(mapViewModel: MapViewModel) {
 
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    // Search Bar
+
+                    // Search Bar for destination ..................................
+
                     AutoCompleteSearchBar(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                             ,
-                        context = context , tesctname =  "Destination drop "
+                        context = context , textname =  "Destination drop location... "
                     ) { placeId, latLng ->
                         selectedLocations = latLng
                         cameraPositionState.move(
@@ -263,10 +276,6 @@ fun MapScreen(mapViewModel: MapViewModel) {
 
                     }
 
-
-                   // Button(onClick = { showBottomSheet = false }) {
-                     //   Text("Close")
-                   // }
 
                     Spacer(modifier = Modifier.height(20.dp))
                 }

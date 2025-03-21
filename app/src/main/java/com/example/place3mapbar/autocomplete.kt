@@ -40,7 +40,7 @@ import com.google.android.libraries.places.api.model.Place
 fun AutoCompleteSearchBar(
     modifier: Modifier = Modifier,
     context: Context,
-    tesctname : String = "shyam",
+    textname : String = "shyam",
     onLocationSelected: (String, LatLng) -> Unit,
 
 ) {
@@ -69,7 +69,7 @@ fun AutoCompleteSearchBar(
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = tesctname) },
+            placeholder = { Text(text = textname) },
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { query = ""; predictions = emptyList() }) {
