@@ -21,13 +21,17 @@ import com.example.place3mapbar.Auth.AuthScreen
 import com.example.place3mapbar.Auth.AuthViewModel
 import com.example.place3mapbar.ui.theme.Place3mapbarTheme
 import com.google.android.libraries.places.api.Places
+import com.google.firebase.FirebaseApp
 import com.strongtogether.googlemapsjetpackcompose.utils.ManifestUtils
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       //forget where it use for now in clg after add auth screen // Retrieve the API key from the manifest file
+        // Initialize Firebase
+      //  FirebaseApp.initializeApp(this)
+
+         // Retrieve the API key from the manifest file
         val apiKey = ManifestUtils.getApiKeyFromManifest(this)
         // Initialize the Places API with the retrieved API key
         if (!Places.isInitialized() && apiKey != null) {
@@ -46,26 +50,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Place3mapbarTheme {
-                val mapViewModel = MapViewModel()
-                //MapScreen(
-                //    mapViewModel
-               // )
-                //GoogleMapWithRoute()
 
-               // BottomNavScreen()
-
-                val navController = rememberNavController()
+               val navController = rememberNavController()
 
                 NavHost(navController, startDestination = startDestination) {
                     composable("auth") { AuthScreen(navController, authViewModel) }
                     composable("main") { BottomNavScreen() } // ✅ Using your Scaffold function
                 }
-                //BottomSheetDemo()
-                //BottomNavScree()
+
 
             }
         }
     }
 }
 
-//AIzaSyBbW_UEhUa4siydX7A1JWc-NFmRqVgTYVo

@@ -36,7 +36,7 @@ fun Profile() {
             painter = painterResource(id = R.drawable.baseline_manage_accounts_24), // Replace with actual image in res/drawable
             contentDescription = "Profile Picture",
             modifier = Modifier
-                .size(100.dp)
+                .size(200.dp)
                 .clip(CircleShape)
         )
 

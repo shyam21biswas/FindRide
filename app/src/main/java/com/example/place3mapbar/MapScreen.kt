@@ -50,7 +50,9 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import timber.log.Timber
-
+//to store global user current location coordinates
+var ved: String = ""
+var shyam : String = ""
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,12 +88,12 @@ fun MapScreen(mapViewModel: MapViewModel) {
             Timber.e("Location permission was denied by the user.")
         }
     }
-    val mapProperties = MapProperties(
+  /*  val mapProperties = MapProperties(
            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
                context,
                 R.raw.stylemap
            )
-          )
+          )*/
 
 // Request the location permission when the composable is launched
     LaunchedEffect(Unit) {
@@ -113,42 +115,31 @@ fun MapScreen(mapViewModel: MapViewModel) {
     }
 
     // Layout that includes the search bar and the map, arranged in a vertical column
-    // Column(modifier = Modifier.fillMaxSize()) {
-    //  Spacer(modifier = Modifier.height(18.dp)) // Add a spacer with a height of 18dp to push the search bar down
-    Box(modifier = Modifier.fillMaxSize())
+     Box(modifier = Modifier.fillMaxSize())
     {
-        // Add the search bar component
-        // SearchBar(
-        //
-        //   onPlaceSelected = { /*place ->
-        //       // When a place is selected from the search bar, update the selected location
-        //      mapViewModel.selectLocation(place, context)*/
-        //   }
-        //  )
+
 
 
         // Display the Google Map
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties = mapProperties,
+            //properties = mapProperties,
 
             onMapClick = { latLng ->
                 // Update the coordinates when the map is clicked
                 currentCoordinates.value = latLng
             }
         ) {
-            /*Marker(
-                state = rememberMarkerState(position = LatLng(26.8467, 80.9462)),
-                title = "Lucknow",
-                snippet = "Capital of Uttar Pradesh"
-            )*/
+
             userLocation?.let {
                 Marker(
                     state = MarkerState(position = it), // Place the marker at the user's location
                     title = "Your Location", // Set the title for the marker
                     snippet = "This is where you are currently located." // Set the snippet for the marker
                 )
+                ved = it.toString() // Store the user's location as a string
+
                 // Move the camera to the user's location with a zoom level of 10f
                 cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 18f)
             }
@@ -188,7 +179,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.TopCenter),
-            context = context , textname = "search place"
+            context = context , textname = ved
         ) { placeId, latLng ->
             selectedLocations = latLng
             cameraPositionState.move(
@@ -198,23 +189,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
         }
 
 
-        // Spacer(modifier = Modifier.height(24.dp))
-        /*Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(42.dp)
-            .align(Alignment.TopCenter),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    )
-    {
-            Text(
-                text = "shyam",
-                modifier = Modifier.padding(16.dp),
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-        }*/
+
         var showBottomSheet by remember { mutableStateOf(false) }
 
          FloatingActionButton(
@@ -275,7 +250,6 @@ fun MapScreen(mapViewModel: MapViewModel) {
                         )
 
                     }
-
 
                     Spacer(modifier = Modifier.height(20.dp))
                 }

@@ -2,9 +2,7 @@ package com.example.place3mapbar
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Geocoder
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,26 +30,7 @@ class MapViewModel: ViewModel() {
     val selectedLocation: State<LatLng?> = _selectedLocation
 
 
-  /*  fun fetchUserLocation(context: Context, fusedLocationClient: FusedLocationProviderClient) {
-       // Check if the location permission is granted
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                // Fetch the last known location
-                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    location?.let {
-                        // Update the user's location in the state
-                        val userLatLng = LatLng(it.latitude, it.longitude)
-                        _userLocation.value = userLatLng
 
-                    }
-                }
-            } catch (e: SecurityException) {
-                 Timber.e("Permission for location access was revoked: ${e.localizedMessage}")
-            }
-        } else {
-            Timber.e("Location permission is not granted.")
-        }
-    }*/
 
     fun fetchUserLocation(context: Context, fusedLocationClient: FusedLocationProviderClient) {
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -74,24 +53,7 @@ class MapViewModel: ViewModel() {
         }
     }
 
-    // Function to geocode the selected place and update the selected location state
-    fun selectLocation(selectedPlace: String, context: Context) {
-        viewModelScope.launch {
-            val geocoder = Geocoder(context)
-            val addresses = withContext(Dispatchers.IO) {
-                // Perform geocoding on a background thread
-                geocoder.getFromLocationName(selectedPlace, 1)
-            }
-            if (!addresses.isNullOrEmpty()) {
-                // Update the selected location in the state
-                val address = addresses[0]
-                val latLng = LatLng(address.latitude, address.longitude)
-                _selectedLocation.value = latLng
-            } else {
-                Timber.tag("MapScreen").e("No location found for the selected place.")
-            }
-        }
-    }
+
 
 
 }
