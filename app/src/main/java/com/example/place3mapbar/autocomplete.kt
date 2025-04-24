@@ -40,7 +40,8 @@ import com.google.android.libraries.places.api.model.Place
 fun AutoCompleteSearchBar(
     modifier: Modifier = Modifier,
     context: Context,
-    textname : String = "shyam",
+    textname : String = "",
+    isPickup: Boolean, // To determine whether it's pickup or destination
     onLocationSelected: (String, LatLng) -> Unit,
 
 ) {
@@ -90,8 +91,14 @@ fun AutoCompleteSearchBar(
                             query = prediction.getFullText(null).toString()
                             val request = FetchPlaceRequest.builder(prediction.placeId, listOf(Place.Field.LAT_LNG)).build()
                             placesClient.fetchPlace(request)
+                                //main line when sccuss.....................
                                 .addOnSuccessListener { response ->
                                     response.place.latLng?.let { latLng ->
+                                        if (isPickup) {
+                                            pickupLocation.value = latLng
+                                        } else {
+                                            destinationLocation.value = latLng
+                                        }
                                         onLocationSelected(prediction.placeId, latLng)
                                     }
                                 }

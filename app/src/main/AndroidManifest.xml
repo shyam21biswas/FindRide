@@ -16,7 +16,7 @@
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBbW_UEhUa4siydX7A1JWc-NFmRqVgTYVo"/>
+            android:value="AIzaSyBmOX8MxQo37oCgKuO1lMF0saxMoUx6GKU"/>
 
         <activity
             android:name=".MainActivity"

@@ -26,13 +26,13 @@ import retrofit2.http.Query
 
 
 import retrofit2.Call
-/*
+
 interface GoogleMapsApiService {
     @GET("directions/json")
     fun getDirections(
         @Query("origin") origin: String,
         @Query("destination") destination: String,
-        @Query("mode") mode: String = "driving",
+        @Query("mode") mode: String = "walking",
         @Query("key") apiKey: String
     ): Call<DirectionsResponse>
 }
@@ -96,14 +96,20 @@ suspend fun fetchRoute(start: LatLng, end: LatLng, apiKey: String): List<LatLng>
             val response = service.getDirections(
                 origin = "${start.latitude},${start.longitude}",
                 destination = "${end.latitude},${end.longitude}",
+                mode = "walking", // Ensure it's set to "walking"
                 apiKey = apiKey
             ).execute()
 
             if (response.isSuccessful) {
-                val route = response.body()?.routes?.firstOrNull()
+                val body = response.body()
+                Log.d("RouteDebug", "Full API Response: ${body}")
+
+                val route = body?.routes?.firstOrNull()
                 if (route != null) {
                     Log.d("RouteDebug", "Route received: ${route.overviewPolyline.points}")
                     return@withContext route.overviewPolyline.points.decodePolyline()
+                } else {
+                    Log.e("RouteError", "No routes found in API response.")
                 }
             } else {
                 Log.e("RouteError", "API failed: ${response.errorBody()?.string()}")
@@ -116,11 +122,14 @@ suspend fun fetchRoute(start: LatLng, end: LatLng, apiKey: String): List<LatLng>
     }
 }
 
+
 @Composable
-fun GoogleMapWithRoutes(apiKey: String) {
+fun GoogleMapWithRoutes(apiKey: String ,
+                        pick: LatLng ?,
+                        destination: LatLng ?) {
     val context = LocalContext.current
-    val startLocation = LatLng(28.6139, 77.2088) // India Gate
-    val endLocation = LatLng(28.6563, 77.2321) // Red Fort
+    val startLocation = pick?:  LatLng(28.6139, 77.2088)// India Gate
+    val endLocation = destination ?:  LatLng(28.6563, 77.2321)// Red Fort
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(startLocation, 12f)
     }
@@ -147,10 +156,10 @@ fun GoogleMapWithRoutes(apiKey: String) {
             if (polylinePoints.isNotEmpty()) {
                 Polyline(
                     points = polylinePoints,
-                    color = Color.Blue,
-                    width = 8f
+                    color = Color.Red,
+                    width = 12f
                 )
             }
         }
     }
-}*/
+}

@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Place3mapbarTheme {
+                //GoogleMapWithRoutes("AIzaSyBmOX8MxQo37oCgKuO1lMF0saxMoUx6GKU")
 
                val navController = rememberNavController()
 

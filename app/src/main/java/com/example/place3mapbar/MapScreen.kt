@@ -50,16 +50,25 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import timber.log.Timber
+import androidx.compose.runtime.key
+import androidx.navigation.NavController
+
 //to store global user current location coordinates
 var ved: String = ""
 var shyam : String = ""
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(mapViewModel: MapViewModel) {
+fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
     // Initialize the camera position state, which controls the camera's position on the map
     val cameraPositionState = rememberCameraPositionState()
     var selectedLocations by remember { mutableStateOf<LatLng?>(null) }
+
+
+    //for upadate the pickup location and destination location
+    var pickup by remember {mutableStateOf(pickupLocation.value) }
+    var destination by remember { mutableStateOf(destinationLocation.value) }
+
 
     /*val cameraPositionState2 = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(26.8467, 80.9462), 12f)
@@ -113,64 +122,96 @@ fun MapScreen(mapViewModel: MapViewModel) {
             }
         }
     }
+    // 🔥 Force recomposition when locations change
+    val forceRecompositionKey = remember(pickup, destination) { Any() }
 
     // Layout that includes the search bar and the map, arranged in a vertical column
      Box(modifier = Modifier.fillMaxSize())
+
     {
-
-
-
-        // Display the Google Map
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            //properties = mapProperties,
-
-            onMapClick = { latLng ->
-                // Update the coordinates when the map is clicked
-                currentCoordinates.value = latLng
-            }
-        ) {
-
-            userLocation?.let {
-                Marker(
-                    state = MarkerState(position = it), // Place the marker at the user's location
-                    title = "Your Location", // Set the title for the marker
-                    snippet = "This is where you are currently located." // Set the snippet for the marker
+        key(forceRecompositionKey) {
+            if (showroute == true && pickup != null && destination != null) {
+                GoogleMapWithRoutes(
+                    apiKey = "AIzaSyBmOX8MxQo37oCgKuO1lMF0saxMoUx6GKU", pickup, destination
                 )
-                ved = it.toString() // Store the user's location as a string
+            } else {
 
-                // Move the camera to the user's location with a zoom level of 10f
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 18f)
-            }
-            // If a location was selected from the search bar, place a marker there
-            selectedLocation?.let {
-                Marker(
-                    state = MarkerState(position = it), // Place the marker at the selected location
-                    title = "Selected Location", // Set the title for the marker
-                    snippet = "This is the place you selected." // Set the snippet for the marker
-                )
-                // Move the camera to the selected location with a zoom level of 15f
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
-            }
 
-            // Marker for Lucknow
-            Marker(
-                state = rememberMarkerState(
-                    position = LatLng(
-                        26.8467,
-                        80.9462
+                // Display the Google Map
+                GoogleMap(
+                    modifier = Modifier.fillMaxSize(),
+                    cameraPositionState = cameraPositionState,
+                    //properties = mapProperties,
+
+                    onMapClick = { latLng ->
+                        // Update the coordinates when the map is clicked
+                        currentCoordinates.value = latLng
+                    }
+                ) {
+
+                    userLocation?.let {
+                        Marker(
+                            state = MarkerState(position = it), // Place the marker at the user's location
+                            title = "Your Location", // Set the title for the marker
+                            snippet = "This is where you are currently located."
+                            // Set the snippet for the marker
+                        )
+                        ved = it.toString()
+
+                        // Store the user's location as a string
+
+                        // Move the camera to the user's location with a zoom level of 10f
+                        cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 18f)
+                    }
+                    // If a location was selected from the search bar, place a marker there
+                    selectedLocation?.let {
+                        Marker(
+                            state = MarkerState(position = it), // Place the marker at the selected location
+                            title = "Selected Location", // Set the title for the marker
+                            snippet = "This is the place you selected." // Set the snippet for the marker
+                        )
+                        // Move the camera to the selected location with a zoom level of 15f
+                        cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
+                    }
+
+                    // Marker for Lucknow
+                    Marker(
+                        state = rememberMarkerState(
+                            position = LatLng(
+                                26.8467,
+                                80.9462
+                            )
+                        ), // Lucknow coordinates
+                        title = "Lucknow",
+                        snippet = "VEDANSHI HOME"
                     )
-                ), // Lucknow coordinates
+
+                    // Marker for kolkata
+                    /*Marker(
+                state = rememberMarkerState(
+                    position = pickupLocation.value
+                ),
+                // Lucknow coordinates
                 title = "Lucknow",
-                snippet = "VEDANSHI HOME"
-            )
-
-            // Marker for kolkata
+                snippet = "VED HOME"
+            )*/
 
 
-            // Marker for kolkata
+                    // Marker for kolkata
 
+                    /* Marker(
+                state = rememberMarkerState(
+                    position = destinationLocation.value
+                ),
+                // Lucknow coordinates
+                title = "kolkata",
+                snippet = "SAM HOME"
+            )*/
+
+
+                }
+
+            }
         }
 
         // Search Bar
@@ -179,7 +220,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.TopCenter),
-            context = context , textname = ved
+            context = context , textname = "search your location", isPickup = true
         ) { placeId, latLng ->
             selectedLocations = latLng
             cameraPositionState.move(
@@ -210,6 +251,8 @@ fun MapScreen(mapViewModel: MapViewModel) {
 
                 ) {
 
+
+
                 //  Bottom Sheet Content
                 Column(
                     modifier = Modifier
@@ -225,7 +268,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
                             .fillMaxWidth()
                             .padding(16.dp),
 
-                        context = context , textname = "Pick up location ..."
+                        context = context , textname = "Pick up location ..." , isPickup = true
                     ) { placeId, latLng ->
                         selectedLocations = latLng
                         cameraPositionState.move(
@@ -242,7 +285,7 @@ fun MapScreen(mapViewModel: MapViewModel) {
                             .fillMaxWidth()
                             .padding(16.dp)
                             ,
-                        context = context , textname =  "Destination drop location... "
+                        context = context , textname =  "Destination drop location... " , isPickup = false
                     ) { placeId, latLng ->
                         selectedLocations = latLng
                         cameraPositionState.move(
@@ -252,9 +295,22 @@ fun MapScreen(mapViewModel: MapViewModel) {
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
+
+                    Button(onClick = {  showroute = true
+                                     showBottomSheet = false} ,
+                        ) {
+                        Text("Find your Routes")
+                    }
+
+
+
+
+
                 }
             }
         }
+
+
     }
 }
 

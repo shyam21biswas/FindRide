@@ -82,12 +82,15 @@ fun HomeScreen() {
 
     val mapViewModel = MapViewModel()
     MapScreen(
-       mapViewModel
+       mapViewModel , navController = rememberNavController()
      )
 }
 
 @Composable
-fun RideScreen() { Text(text = "🚗 Ride Screen") }
+fun RideScreen() { //Text(text = "🚗 Ride Screen")
+    //GoogleMapWithRoutes("AIzaSyBmOX8MxQo37oCgKuO1lMF0saxMoUx6GKU" , pickupLocation.value , destinationLocation.value)
+    RideApp()
+}
 // we have connect api to show a lazy column.....
 
 @Composable
