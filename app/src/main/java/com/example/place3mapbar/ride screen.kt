@@ -1,14 +1,12 @@
 package com.example.place3mapbar
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,12 +40,24 @@ data class Ride(
 
 
 @Composable
-fun RideApp() {
-//    var pickupLocationt = remember { mutableStateOf<LatLng?>(LatLng(26.8467, 80.9462)) }
-//    var destinationLocationt = remember { mutableStateOf<LatLng?>(LatLng(26.4553, 80.3561)) }
 
-    val rides = remember(pickupLocation.value, destinationLocation.value) {
-        generateAvailableRides(pickupLocation.value, destinationLocation.value)
+fun RideApp() {
+    var lastPickup by remember { mutableStateOf<LatLng?>(null) }
+    var lastDestination by remember { mutableStateOf<LatLng?>(null) }
+    var rides by remember { mutableStateOf<List<Ride>>(emptyList()) }
+
+    val currentPickup = pickupLocation.value
+    val currentDestination = destinationLocation.value
+
+    LaunchedEffect(currentPickup, currentDestination) {
+        if (currentPickup != null && currentDestination != null &&
+            (currentPickup != lastPickup || currentDestination != lastDestination)) {
+
+            lastPickup = currentPickup
+            lastDestination = currentDestination
+
+            rides = generateAvailableRides(currentPickup, currentDestination)
+        }
     }
 
     Column(
@@ -56,7 +66,7 @@ fun RideApp() {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Available Rides", style = MaterialTheme.typography.headlineSmall,)
+        Text("Available Rides", style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(12.dp))
 
         if (rides.isEmpty()) {
@@ -70,6 +80,7 @@ fun RideApp() {
         }
     }
 }
+
 
 fun generateAvailableRides(pickup: LatLng?, destination: LatLng?): List<Ride> {
     if (pickup == null || destination == null) return emptyList()

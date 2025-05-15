@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 
 
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -29,19 +30,17 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 @Composable
 fun BottomNavScreen() {
     val navController = rememberNavController()
-    Scaffold(
+    val rideViewModel: RideViewModel = viewModel() // scoped to NavigationGraph
 
-        bottomBar = { BottomNavigationBar(navController) }
-    ) { innerPadding ->
+    Scaffold(bottomBar = { BottomNavigationBar(navController) }) { innerPadding ->
         AnimatedNavHost(
             navController = navController,
             startDestination = "home",
             modifier = Modifier.padding(innerPadding),
-            enterTransition = {  fadeIn() },
-            exitTransition = {  fadeOut() },
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() },
             popEnterTransition = { slideInHorizontally() },
             popExitTransition = { slideOutHorizontally() }
-
         ) {
             composable("home") { HomeScreen() }
             composable("ride") { RideScreen() }
@@ -49,6 +48,7 @@ fun BottomNavScreen() {
         }
     }
 }
+
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -63,7 +63,11 @@ fun BottomNavigationBar(navController: NavController) {
         items.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
-                onClick = { navController.navigate(item.route) },
+                onClick = { if (currentRoute != item.route) {
+                    navController.navigate(item.route) {
+                        launchSingleTop = true
+                    }
+                } },
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icon),
