@@ -88,6 +88,18 @@ fun RideApp() {
 fun generateAvailableRides(pickup: LatLng?, destination: LatLng?): List<Ride> {
     if (pickup == null || destination == null) return emptyList()
 
+    // Define blocked locations
+    val blockedLocations = listOf(
+        LatLng(26.2648064, 81.5054372),
+        LatLng(26.2720264, 81.5069359)
+    )
+
+    // Block if either pickup or destination is within 20 km of any blocked location
+    val isNearBlocked = blockedLocations.any { blocked ->
+        calculateDistanceInKm(blocked, pickup) <= 20 || calculateDistanceInKm(blocked, destination) <= 20
+    }
+    if (isNearBlocked) return emptyList()
+
     val citiesBounds = listOf(
         26.6..27.1 to 80.8..81.1,   // Lucknow
         26.0..26.4 to 81.0..81.5,   // Rae Bareli
@@ -101,7 +113,7 @@ fun generateAvailableRides(pickup: LatLng?, destination: LatLng?): List<Ride> {
 
     val pickupInBounds = pickup.inAnyBounds()
     val destinationInBounds = destination.inAnyBounds()
-    val distance = calculateDistanceInKm(pickup, destination)
+    val distance = calculateDistanceInKmk(pickup, destination)
     val trafficConditions = listOf("Light", "Moderate", "Heavy")
 
     val vehicleTypes = if (pickupInBounds && destinationInBounds) {
@@ -118,6 +130,55 @@ fun generateAvailableRides(pickup: LatLng?, destination: LatLng?): List<Ride> {
 }
 
 
+fun calculateDistanceInKmk(start: LatLng, end: LatLng): Double {
+    val radius = 6371.0 // Earth's radius in kilometers
+    val latDiff = Math.toRadians(end.latitude - start.latitude)
+    val lonDiff = Math.toRadians(end.longitude - start.longitude)
+
+    val a = sin(latDiff / 2).pow(2.0) +
+            cos(Math.toRadians(start.latitude)) *
+            cos(Math.toRadians(end.latitude)) *
+            sin(lonDiff / 2).pow(2.0)
+
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return radius * c
+}
+
+
+
+//fun generateAvailableRides(pickup: LatLng?, destination: LatLng?): List<Ride> {
+//    if (pickup == null || destination == null) return emptyList()
+//
+//    val citiesBounds = listOf(
+//        26.6..27.1 to 80.8..81.1,   // Lucknow
+//        26.0..26.4 to 81.0..81.5,   // Rae Bareli
+//        26.2..26.6 to 80.1..80.5,   // Kanpur
+//        25.2..25.4 to 82.9..83.2    // Varanasi
+//    )
+//
+//    fun LatLng.inAnyBounds(): Boolean {
+//        return citiesBounds.any { bounds -> latitude in bounds.first && longitude in bounds.second }
+//    }
+//
+//    val pickupInBounds = pickup.inAnyBounds()
+//    val destinationInBounds = destination.inAnyBounds()
+//    val distance = calculateDistanceInKm(pickup, destination)
+//    val trafficConditions = listOf("Light", "Moderate", "Heavy")
+//
+//    val vehicleTypes = if (pickupInBounds && destinationInBounds) {
+//        listOf("UberX", "UberXL", "UberBlack", "Ola Mini", "Ola Prime", "Ola SUV")
+//    } else {
+//        listOf("UberBlack", "Ola SUV")
+//    }
+//
+//    return vehicleTypes.map {
+//        val traffic = trafficConditions.random()
+//        val price = calculatePrice(it, traffic, distance)
+//        Ride(vehicleType = it, distance = distance, trafficCondition = traffic, price = price)
+//    }.sortedBy { it.price }
+//}
+//
+//
 
 
 // Custom extension to simplify bounding checks
