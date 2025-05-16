@@ -52,6 +52,7 @@ import com.google.maps.android.compose.rememberMarkerState
 import timber.log.Timber
 import androidx.compose.runtime.key
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 
 //to store global user current location coordinates
 var ved: String = ""
@@ -81,7 +82,19 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
     // Observe the user's location from the ViewModel
     val userLocation by mapViewModel.userLocation
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    // Load the raw resource as a string
+    val styleJson = remember {
+        context.resources.openRawResource(R.raw.stylemap)
+            .bufferedReader().use { it.readText() }
+    }
 
+    val mapProperties by remember {
+        mutableStateOf(
+            MapProperties(
+                mapStyleOptions = MapStyleOptions(styleJson)
+            )
+        )
+    }
     // Observe the selected location from the ViewModel
     val selectedLocation by mapViewModel.selectedLocation
 
@@ -97,14 +110,10 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
             Timber.e("Location permission was denied by the user.")
         }
     }
-  /*  val mapProperties = MapProperties(
-           mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
-               context,
-                R.raw.stylemap
-           )
-          )*/
+
 
 // Request the location permission when the composable is launched
+
     LaunchedEffect(Unit) {
         when (PackageManager.PERMISSION_GRANTED) {
             // Check if the location permission is already granted
@@ -126,9 +135,11 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
     val forceRecompositionKey = remember(pickup, destination) { Any() }
 
     // Layout that includes the search bar and the map, arranged in a vertical column
+
      Box(modifier = Modifier.fillMaxSize())
 
     {
+
         key(forceRecompositionKey) {
             if (showroute == true && pickup != null && destination != null) {
                 GoogleMapWithRoutes(
@@ -142,6 +153,7 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
                     modifier = Modifier.fillMaxSize(),
                     cameraPositionState = cameraPositionState,
                     //properties = mapProperties,
+                    properties = mapProperties,
 
                     onMapClick = { latLng ->
                         // Update the coordinates when the map is clicked
@@ -171,42 +183,22 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
                             snippet = "This is the place you selected." // Set the snippet for the marker
                         )
                         // Move the camera to the selected location with a zoom level of 15f
-                        cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
+                        cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 8f)
                     }
 
                     // Marker for Lucknow
-                    Marker(
-                        state = rememberMarkerState(
-                            position = LatLng(
-                                26.8467,
-                                80.9462
-                            )
-                        ), // Lucknow coordinates
-                        title = "Lucknow",
-                        snippet = "VEDANSHI HOME"
-                    )
-
-                    // Marker for kolkata
-                    /*Marker(
-                state = rememberMarkerState(
-                    position = pickupLocation.value
-                ),
-                // Lucknow coordinates
-                title = "Lucknow",
-                snippet = "VED HOME"
-            )*/
+//                    Marker(
+//                        state = rememberMarkerState(
+//                            position = LatLng(
+//                                26.8467,
+//                                80.9462
+//                            )
+//                        ), // Lucknow coordinates
+//                        title = "Lucknow",
+//                        snippet = "VEDANSHI HOME"
+//                    )
 
 
-                    // Marker for kolkata
-
-                    /* Marker(
-                state = rememberMarkerState(
-                    position = destinationLocation.value
-                ),
-                // Lucknow coordinates
-                title = "kolkata",
-                snippet = "SAM HOME"
-            )*/
 
 
                 }
@@ -223,9 +215,13 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
             context = context , textname = "search your location", isPickup = true
         ) { placeId, latLng ->
             selectedLocations = latLng
+
             cameraPositionState.move(
                 CameraUpdateFactory.newLatLngZoom(latLng, 10f)
             )
+
+
+
 
         }
 
@@ -247,7 +243,8 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                tonalElevation = 15.dp , shape = MaterialTheme.shapes.extraLarge
+                tonalElevation = 15.dp , shape = MaterialTheme.shapes.extraLarge,
+                containerColor = Color.Transparent
 
                 ) {
 
@@ -296,8 +293,16 @@ fun MapScreen(mapViewModel: MapViewModel, navController: NavController) {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Button(onClick = {  showroute = true
-                                     showBottomSheet = false} ,
+                    Button(onClick = {
+                        showBottomSheet = false
+
+
+
+                        navController.navigate("home")
+
+
+                        showroute = true
+                                     } ,
                         ) {
                         Text("Find your Routes")
                     }

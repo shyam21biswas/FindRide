@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.gson.annotations.SerializedName
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,7 @@ interface GoogleMapsApiService {
     fun getDirections(
         @Query("origin") origin: String,
         @Query("destination") destination: String,
-        @Query("mode") mode: String = "walking",
+        @Query("mode") mode: String = "driving",
         @Query("key") apiKey: String
     ): Call<DirectionsResponse>
 }
@@ -134,6 +135,18 @@ fun GoogleMapWithRoutes(apiKey: String ,
         position = CameraPosition.fromLatLngZoom(startLocation, 12f)
     }
     var polylinePoints by remember { mutableStateOf<List<LatLng>>(emptyList()) }
+    // Load the raw resource as a string
+    val styleJson = remember {
+        context.resources.openRawResource(R.raw.stylemap)
+            .bufferedReader().use { it.readText() }
+    }
+    val mapProperties by remember {
+        mutableStateOf(
+            MapProperties(
+                mapStyleOptions = MapStyleOptions(styleJson)
+            )
+        )
+    }
 
     // Fetch the route when the screen loads
     LaunchedEffect(Unit) {
@@ -145,12 +158,14 @@ fun GoogleMapWithRoutes(apiKey: String ,
     Box(modifier = Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
+            properties = mapProperties,
             cameraPositionState = cameraPositionState,
+
             uiSettings = MapUiSettings(zoomControlsEnabled = false)
         ) {
             // Markers
-            Marker(state = MarkerState(position = startLocation), title = "India Gate")
-            Marker(state = MarkerState(position = endLocation), title = "Red Fort")
+            Marker(state = MarkerState(position = startLocation), title = "Pick Up")
+            Marker(state = MarkerState(position = endLocation), title = "Drop Down")
 
             // Draw the route
             if (polylinePoints.isNotEmpty()) {

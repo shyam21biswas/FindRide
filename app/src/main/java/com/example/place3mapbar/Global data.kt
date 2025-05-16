@@ -17,3 +17,5 @@ var destinationlat = mutableStateOf<String?>(null)
 
 
 var showroute : Boolean = false
+
+var permis = false

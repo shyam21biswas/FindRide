@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -22,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -42,7 +44,7 @@ fun BottomNavScreen() {
             popEnterTransition = { slideInHorizontally() },
             popExitTransition = { slideOutHorizontally() }
         ) {
-            composable("home") { HomeScreen() }
+            composable("home") { HomeScreen(navController) }
             composable("ride") { RideScreen() }
             composable("profile") { ProfileScreen() }
         }
@@ -63,11 +65,23 @@ fun BottomNavigationBar(navController: NavController) {
         items.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
-                onClick = { if (currentRoute != item.route) {
-                    navController.navigate(item.route) {
-                        launchSingleTop = true
+//                onClick = {
+//                    if (currentRoute != item.route) {
+//                        navController.navigate(item.route) {
+//                            launchSingleTop = true
+//                        }
+//                    }
+//                }
+                onClick = {
+                    val isOnTop = navController.currentBackStackEntry?.destination?.route == item.route
+                    if (!isOnTop) {
+                        navController.navigate(item.route) {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
-                } },
+                },
+                enabled = currentRoute != item.route, // 👈 disables tap when already on it
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icon),
@@ -76,24 +90,50 @@ fun BottomNavigationBar(navController: NavController) {
                 },
                 label = { Text(item.label) }
             )
+
         }
     }
 }
 
-@Composable
-fun HomeScreen() {
-    Text(text = "🏠 Home Screen")
+//@Composable
+//fun HomeScreen(navController: NavController) {
+//    Text(text = "🏠 Home Screen")
+//
+//
+//
+//    val mapViewModel = MapViewModel()
+//    MapScreen(
+//       mapViewModel , navController = rememberNavController()
+//     )
+//}
 
-    val mapViewModel = MapViewModel()
-    MapScreen(
-       mapViewModel , navController = rememberNavController()
-     )
+@Composable
+fun HomeScreen(navController: NavController) {
+    val mapViewModel = remember { MapViewModel() } // or use: viewModel()
+
+    // Optionally show some header
+    Column {
+        Text(
+            text = "🏠 Home Screen",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(16.dp)
+        )
+
+
+        MapScreen(
+            mapViewModel = mapViewModel,
+            navController = navController // ✅ pass main navController
+        )
+    }
 }
+
 
 @Composable
 fun RideScreen() { //Text(text = "🚗 Ride Screen")
     //GoogleMapWithRoutes("AIzaSyBmOX8MxQo37oCgKuO1lMF0saxMoUx6GKU" , pickupLocation.value , destinationLocation.value)
-    RideApp()
+
+        RideApp()
+
 }
 // we have connect api to show a lazy column.....
 

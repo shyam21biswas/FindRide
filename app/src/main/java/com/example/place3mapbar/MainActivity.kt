@@ -54,9 +54,18 @@ class MainActivity : ComponentActivity() {
 
                val navController = rememberNavController()
 
-                NavHost(navController, startDestination = startDestination) {
+                NavHost(navController, startDestination = "splash") {
+                    composable("splash") { SplashScreen(navController) }
+                    composable("signup") { SignupScreen1n(navController) }
+                    composable("mine") { BottomNavScreen() }
+                    composable("welcome") { Welcome(navController) }
+
                     composable("auth") { AuthScreen(navController, authViewModel) }
                     composable("main") { BottomNavScreen() } // ✅ Using your Scaffold function
+                    composable("home") { HomeScreen(navController) }
+                    composable("ride"){ RideScreen() }
+                    composable("dj") { djScreen() }
+
                 }
 
 
@@ -65,3 +74,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+@Composable
+fun djScreen(){
+    Text("vedanshi❤️😍")
+}

@@ -81,12 +81,14 @@ fun AutoCompleteSearchBar(
 
 
         // Show Predictions as a Dropdown List
-        LazyColumn(modifier = Modifier.background(Color.White)) {
+        LazyColumn(modifier = Modifier.background(Color.Transparent)) {
             items(predictions) { prediction ->
                 Text(
                     text = prediction.getFullText(null).toString(),
+                    color = Color.Black,
                     modifier = Modifier
                         .fillMaxWidth()
+
                         .clickable {
                             query = prediction.getFullText(null).toString()
                             val request = FetchPlaceRequest.builder(prediction.placeId, listOf(Place.Field.LAT_LNG)).build()

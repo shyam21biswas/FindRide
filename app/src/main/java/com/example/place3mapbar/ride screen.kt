@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.painter.Painter
+import kotlinx.coroutines.delay
 import kotlin.math.*
 
 
@@ -42,6 +43,8 @@ data class Ride(
 @Composable
 
 fun RideApp() {
+
+
     var lastPickup by remember { mutableStateOf<LatLng?>(null) }
     var lastDestination by remember { mutableStateOf<LatLng?>(null) }
     var rides by remember { mutableStateOf<List<Ride>>(emptyList()) }
