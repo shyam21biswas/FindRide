@@ -130,6 +130,7 @@ fun generateAvailableRides(pickup: LatLng?, destination: LatLng?): List<Ride> {
 }
 
 
+
 fun calculateDistanceInKmk(start: LatLng, end: LatLng): Double {
     val radius = 6371.0 // Earth's radius in kilometers
     val latDiff = Math.toRadians(end.latitude - start.latitude)
