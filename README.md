@@ -17,7 +17,6 @@ CabEasy is a ride comparison and fare estimation Android app built using **Kotli
 
 ## 📸 Screenshots
 
-> Make sure to create a `screenshots/` folder in your repository and add the images there.
 
   
 ### Home Screen  
