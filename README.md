@@ -20,7 +20,7 @@ CabEasy is a ride comparison and fare estimation Android app built using **Kotli
 > Make sure to create a `screenshots/` folder in your repository and add the images there.
 
 ### Home Screen  
-![Home Screen](screenshots/home_screen.png)
+![Home Screen]([screenshots/home_screen.png](https://drive.google.com/file/d/1ynfLvqaYIJxRgNfE6U5DIqBONxEGfwzb/view?usp=drive_link))
 
 ### Map View – Select Location  
 ![Map Picker](screenshots/map_picker.png)
@@ -56,4 +56,35 @@ CabEasy is a ride comparison and fare estimation Android app built using **Kotli
    ```bash
    git clone https://github.com/your-username/CabEasy.git
    cd CabEasy
+   
+### Open in Android Studio
+
+   - Launch Android Studio
+   - Open the cloned CabEasy folder
+   
+### Add Your Google Maps API Key
+- android:name="com.google.android.geo.API_KEY"
+-  android:value="YOUR_GOOGLE_MAPS_API_KEY_HERE"/>
+
+### Run the App
+- Connect your Android device or start an emulator
+- Click the Run button in Android Studio
+  
+
+
+---
+
+### ✅ What You Need to Do:
+
+1. Replace:
+   - `YOUR_GOOGLE_MAPS_API_KEY_HERE` with your actual Maps API key
+
+
+Let me know if you want a badge section, video demo, or contributor guidelines added!
+
+
+
+  
+   
+   
 
