@@ -19,14 +19,20 @@ CabEasy is a ride comparison and fare estimation Android app built using **Kotli
 
 > Make sure to create a `screenshots/` folder in your repository and add the images there.
 
+  
 ### Home Screen  
-![Home Screen]([screenshots/home_screen.png](https://drive.google.com/file/d/1ynfLvqaYIJxRgNfE6U5DIqBONxEGfwzb/view?usp=drive_link))
+<img src="https://drive.google.com/uc?export=view&id=1ynfLvqaYIJxRgNfE6U5DIqBONxEGfwzb" width="300" alt="Home Screen">
+
+
 
 ### Map View – Select Location  
-![Map Picker](screenshots/map_picker.png)
+<img src="https://drive.google.com/uc?export=view&id=12_DSgtTTSDn4XKsNvyi7bIG2KtnnFy6E" width="300" alt="Map Picker">
+
+
 
 ### Ride Comparison Screen  
-![Fare Comparison](screenshots/ride_comparison.png)
+<img src="https://drive.google.com/uc?export=view&id=1VvyEApHfI5kmvbYAzC-bx0FefSVVYPLk" width="300" alt="Ride Comparison">
+
 
 ---
 
